@@ -3,8 +3,8 @@
 # Avancement
 ## Partie 1
 - Projet SwiftUI & Dépôt Github : OK
-- Info.plist : NOK
-- Struct Pokemon : NOK
+- Communication avec API : OK
+- Struct Pokemon : OK
   
 ## Partie 2
 - 
