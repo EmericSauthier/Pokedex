@@ -9,11 +9,13 @@
 ## Partie 2
 - Récupérer de la liste de pokemons : OK
 - Décoder la liste en JSON : OK
-- Affichage des pokemons : NOK
+- Affichage des pokemons : OK
 - CoreData : OK
 
 ## Partie 3
-- 
+- Page de détail d'un pokemon : NOK
+- Barre de navigation  : NOK
+- Animations personnalisées : NOK
 
 ## Partie 4
 - 
