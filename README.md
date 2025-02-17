@@ -7,7 +7,10 @@
 - Struct Pokemon : OK
   
 ## Partie 2
-- 
+- Récupérer de la liste de pokemons : OK
+- Décoder la liste en JSON : OK
+- Affichage des pokemons : NOK
+- CoreData : OK
 
 ## Partie 3
 - 
