@@ -12,9 +12,9 @@ struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
 
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \PokemonEntity.id, ascending: true)],
         animation: .default)
-    private var items: FetchedResults<Item>
+    private var pokemons: FetchedResults<PokemonEntity>
     
     @EnvironmentObject var pokemonViewModel: PokemonViewModel
 

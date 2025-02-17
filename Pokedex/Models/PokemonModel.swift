@@ -12,6 +12,24 @@ struct Pokemon: Codable, Identifiable {
     var name: String
     var types: [PokemonTypeInfo]
     var sprites: PokemonSprite
+    
+    static func toString(pokemon: Pokemon) -> String {
+        do {
+            return try JSONEncoder().encode(pokemon).base64EncodedString()
+        } catch {
+            print("Erreur : \(error)")
+            return ""
+        }
+    }
+    
+    static func toJson(stringObject: String) -> Pokemon? {
+        do {
+            return try JSONDecoder().decode(Pokemon.self, from: stringObject.data(using: .utf8)!)
+        } catch {
+            print("Erreur : \(error)")
+            return nil
+        }
+    }
 }
 
 struct PokemonInfoResponse: Codable {

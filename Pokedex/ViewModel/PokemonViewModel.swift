@@ -21,13 +21,12 @@ class PokemonViewModel: ObservableObject {
         
         for pokemon in pokemons {
             let entity = PokemonEntity(context: viewContext)
-            entity.id = pokemon.id
-            entity.name = pokemon.name
-            entity.sprites = pokemon.sprites
-            entity.types = pokemon.types
+            entity.id = Int64(pokemon.id)
+            entity.data = Pokemon.toString(pokemon: pokemon)
         }
         
         do {
+            PersistenceController.saveCache()
             print("Data saved to cache")
         } catch {
             print("Error : \(error)")

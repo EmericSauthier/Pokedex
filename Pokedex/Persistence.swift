@@ -35,4 +35,16 @@ struct PersistenceController {
             print("Erreur : \(error)")
         }
     }
+    
+    static func saveCache() {
+        let context = PersistenceController.shared.container.viewContext
+        
+        if context.hasChanges {
+            do {
+                try context.save()
+            } catch {
+                print("Erreur : \(error)")
+            }
+        }
+    }
 }
