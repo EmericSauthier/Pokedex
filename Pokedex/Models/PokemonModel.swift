@@ -30,6 +30,16 @@ struct Pokemon: Codable, Identifiable {
             return nil
         }
     }
+    
+    func getTypes() -> String {
+        var string = " "
+        
+        for type in types {
+            string += "\(type.type.name)  "
+        }
+        string += " "
+        return string.replacingOccurrences(of: "   ", with: "").replacingOccurrences(of: "  ", with: ", ")
+    }
 }
 
 struct PokemonInfoResponse: Codable {

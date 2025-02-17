@@ -22,17 +22,26 @@ struct ContentView: View {
         NavigationView {
             List {
                 ForEach(pokemonViewModel.pokemons) { pokemon in
-                    VStack {
-                        HStack {
-                            AsyncImage(url: URL(string: pokemon.sprites.front_default!))
+                    HStack {
+                        AsyncImage(url: URL(string: pokemon.sprites.front_default!)) { image in
+                            image.resizable().scaledToFit()
+                        } placeholder: {
+                            ProgressView()
+                        }
+                        .frame(width: 64, height: 64)
+                        
+                        VStack(alignment: .leading) {
+                            Text(pokemon.name)
+                            Text("Types :" + pokemon.getTypes())
                         }
                     }
                 }
+                Spacer()
             }
         }
+        .background(Color.red)
         .task {
             await pokemonViewModel.initializeData()
-            print(pokemonViewModel.pokemons.count)
         }
     }
 }

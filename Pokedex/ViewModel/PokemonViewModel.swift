@@ -6,12 +6,19 @@
 //
 
 import Foundation
+import CoreData
 
 class PokemonViewModel: ObservableObject {
     @Published var pokemons: [Pokemon] = []
     
     func initializeData() async {
-        pokemons = await ApiService().loadData()
+        print("En mémoire : \(PersistenceController.shared.container.viewContext.retainsRegisteredObjects)")
+        if PersistenceController.shared.container.viewContext.retainsRegisteredObjects {
+            pokemons = loadFromCache()
+        } else {
+            pokemons = await ApiService().loadData()
+            saveToCache()
+        }
     }
     
     func saveToCache() {
@@ -25,11 +32,27 @@ class PokemonViewModel: ObservableObject {
             entity.data = Pokemon.toString(pokemon: pokemon)
         }
         
+        PersistenceController.saveCache()
+    }
+    
+    func loadFromCache() -> [Pokemon] {
+        let viewContext = PersistenceController.shared.container.viewContext
+        let fetchRequest: NSFetchRequest<PokemonEntity> = PokemonEntity.fetchRequest()
+        var pokemonList: [Pokemon] = []
+        
         do {
-            PersistenceController.saveCache()
-            print("Data saved to cache")
+            let results = try viewContext.fetch(fetchRequest)
+            
+            for result in results {
+                let pokemon = Pokemon.toJson(stringObject: result.data ?? "")
+                if pokemon != nil {
+                    pokemonList.append(pokemon!)
+                }
+            }
         } catch {
-            print("Error : \(error)")
+            print("Erreur : \(error)")
         }
+        
+        return pokemonList
     }
 }
