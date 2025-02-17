@@ -34,7 +34,7 @@ struct ContentView: View {
                             .frame(width: 64, height: 64)
                             
                             VStack(alignment: .leading) {
-                                Text(pokemon.name)
+                                Text(pokemon.name.capitalized)
                                 Text("Types :" + pokemon.getTypes())
                             }
                         }
@@ -42,7 +42,6 @@ struct ContentView: View {
                 }
             }
         }
-        .background(Color.red)
         .task {
             await pokemonViewModel.initializeData()
         }

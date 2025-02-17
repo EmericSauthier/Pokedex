@@ -14,7 +14,14 @@ struct PokemonDetail: View {
     
     var body: some View {
         VStack {
-            Text(pokemon.name)
+            AsyncImage(url: URL(string: pokemon.sprites.front_default!)) { image in
+                image.resizable().scaledToFit()
+            } placeholder: {
+                ProgressView()
+            }
+            Text(pokemon.name.capitalized)
+                .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                .fontWidth(Font.Width.expanded)
         }
     }
 }
