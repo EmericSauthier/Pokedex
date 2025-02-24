@@ -52,7 +52,7 @@ Le dossier "Views" contient les deux pages de l'application : la page principale
 Le dossier "ViewModel" contient le view model de l'application.
 Le view model fait office d'intermédiaire entre l'api et les vues.
 
-## Dossier "ApiService"
+## Dossier "ApiService"
 Le dossier "ApiService" contient la class "ApiService" qui se charge de questionner l'api et de sérialiser les données en objet.
 
 ## Dossier "Models"
