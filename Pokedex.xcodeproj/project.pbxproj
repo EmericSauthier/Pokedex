@@ -117,7 +117,6 @@
 				8A2389BB2D633CF200DA15E7 /* ApiService */,
 				8A2389B22D633BE700DA15E7 /* Models */,
 				8A23897D2D631F5900DA15E7 /* PokedexApp.swift */,
-				8A23897F2D631F5900DA15E7 /* ContentView.swift */,
 				8A2389812D631F5B00DA15E7 /* Assets.xcassets */,
 				8A2389862D631F5B00DA15E7 /* Persistence.swift */,
 				8A2389882D631F5B00DA15E7 /* Pokedex.xcdatamodeld */,
@@ -181,6 +180,7 @@
 		8AB335B72D63888B0039F61C /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				8A23897F2D631F5900DA15E7 /* ContentView.swift */,
 				8AB335B82D6388A70039F61C /* PokemonDetail.swift */,
 			);
 			path = Views;

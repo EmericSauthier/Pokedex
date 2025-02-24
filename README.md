@@ -15,7 +15,7 @@
 ## Partie 3
 - Page de détail d'un pokemon : OK
 - Barre de navigation  : OK
-- Animations personnalisées : NOK
+- Animations personnalisées : OK
 
 ## Partie 4
 - Barre de recherche : OK
@@ -24,12 +24,6 @@
 - @State et onChange : OK
 
 ## Partie 5
-- 
-
-## Partie 6
-- 
-
-## Partie 7
-- 
+- Animation à l'affichage d'une carte : OK
 
 # Fonctionnalités
