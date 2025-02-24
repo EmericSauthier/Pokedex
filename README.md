@@ -61,3 +61,6 @@ La classe ApiService s'appuie sur ces classes pour sérialiser les données.
 
 ## Fichier "Persistence"
 Le fichier "Persistence" permet de mettre en place la persistance des données et la sauvegarde de celles-ci dans le cache. Il est donc possible de consulter le pokédex sans connexion ou de garder sa liste de favoris.
+Les données stockées dans le cache ont la forme suivantes :
+- id -> Int64
+- data -> String contenant l'ensemble des informations du pokémon
