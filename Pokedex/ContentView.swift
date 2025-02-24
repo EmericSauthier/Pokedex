@@ -10,7 +10,7 @@ import CoreData
 
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
-
+    
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \PokemonEntity.id, ascending: true)],
         animation: .default)
@@ -22,11 +22,15 @@ struct ContentView: View {
     private var favorites: FetchedResults<FavoriteEntity>
     
     @EnvironmentObject var pokemonViewModel: PokemonViewModel
-
+    
+    @State var pokemonsDisplayed: [Pokemon] = []
+    @State var pokemonSearched: String = ""
+    
     var body: some View {
         NavigationView {
             List {
-                ForEach(pokemonViewModel.pokemons) { pokemon in
+                // pokemonViewModel.pokemons
+                ForEach(pokemonsDisplayed) { pokemon in
                     NavigationLink {
                         PokemonDetail(pokemon: pokemon)
                             .environmentObject(pokemonViewModel)
@@ -49,9 +53,28 @@ struct ContentView: View {
                     }
                 }
             }
+            .toolbar(content: {
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                    TextField("Rechercher un pokemon", text: $pokemonSearched)
+                        .autocapitalization(.none)
+                        .disableAutocorrection(true)
+                        .onChange(of: $pokemonSearched.wrappedValue, {
+                            if $pokemonSearched.wrappedValue.isEmpty {
+                                pokemonsDisplayed = pokemonViewModel.pokemons
+                            } else {
+                                pokemonsDisplayed = pokemonViewModel.pokemons.filter({
+                                    let string = NSString(string: $0.name.lowercased())
+                                    return string.contains(String($pokemonSearched.wrappedValue).lowercased())
+                                })
+                            }
+                        })
+                }
+            })
         }
         .task {
             await pokemonViewModel.initializeData()
+            pokemonsDisplayed = pokemonViewModel.pokemons
         }
     }
 }

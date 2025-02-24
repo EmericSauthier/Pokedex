@@ -39,6 +39,7 @@ struct PersistenceController {
     
     static func loadPokemons() -> [Pokemon] {
         let fetchRequest: NSFetchRequest<PokemonEntity> = PokemonEntity.fetchRequest()
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]
         var pokemonList: [Pokemon] = []
         
         do {
@@ -76,6 +77,7 @@ struct PersistenceController {
     // Chargement des favoris
     static func loadFavorites() -> [Pokemon] {
         let fetchRequest: NSFetchRequest<FavoriteEntity> = FavoriteEntity.fetchRequest()
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]
         var pokemonList: [Pokemon] = []
         
         do {

@@ -11,7 +11,7 @@ class ApiService {
     // Charge une liste de 20 pokemons
     func loadData() async -> [Pokemon] {
         do {
-            let url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=20")!
+            let url = URL(string: "https://pokeapi.co/api/v2/pokemon/?limit=20")!
             
             var request = URLRequest(url: url)
             request.httpMethod = "GET"  // optional

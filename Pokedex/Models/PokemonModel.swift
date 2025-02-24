@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-struct Pokemon: Codable, Identifiable {
+struct Pokemon: Codable, Identifiable, Hashable {
     
     var id: Int
     var name: String
@@ -53,6 +53,14 @@ struct Pokemon: Codable, Identifiable {
         }
         string += " "
         return string.replacingOccurrences(of: "   ", with: "").replacingOccurrences(of: "  ", with: ", ")
+    }
+    
+    static func == (lhs: Pokemon, rhs: Pokemon) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }
 

@@ -13,15 +13,29 @@ class PokemonViewModel: ObservableObject {
     @Published var favorites: [Pokemon] = []
     
     func initializeData() async {
-        pokemons = loadPokemonFromCache()
-        favorites = loadFavoritesFromCache()
+        var pokemonsFromApi = await ApiService().loadData()
+        var pokemonsFromCache = loadPokemonFromCache()
+        
+        pokemons = pokemonsFromApi
+        
+        pokemonsFromCache.forEach({ pokemon in
+            if !pokemons.contains(where: { $0.id == pokemon.id }) {
+                pokemons.append(pokemon)
+            }
+        })
+        
+        pokemons.sort(by: { left, right in left.id > right.id })
+        
+        favorites = loadFavoritesFromCache().filter({
+            let pokemonId = $0.id
+            return pokemons.contains(where: {$0.id == pokemonId})
+        })
         
         if pokemons.count == 0 {
-            pokemons = await ApiService().loadData()
-            savePokemons()
-            
             favorites = []
         }
+        
+        savePokemons()
     }
     
     func loadPokemonFromCache() -> [Pokemon] {
