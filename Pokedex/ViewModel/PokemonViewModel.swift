@@ -34,7 +34,7 @@ class PokemonViewModel: ObservableObject {
             entity.data = Pokemon.toString(pokemon: pokemon)
         }
         
-        PersistenceController.savePokemons()
+        PersistenceController.saveCache()
     }
     
 //    func loadFromCache() -> [Pokemon] {
@@ -64,6 +64,16 @@ class PokemonViewModel: ObservableObject {
     
     func loadFavoritesFromCache() -> [Pokemon] {
         return PersistenceController.loadFavorites()
+    }
+    
+    func addToFavorites(pokemon: Pokemon) {
+        let viewContext = PersistenceController.shared.container.viewContext
+        
+        let entity = FavoriteEntity(context: viewContext)
+        entity.id = Int64(pokemon.id)
+        entity.data = Pokemon.toString(pokemon: pokemon)
+        
+        PersistenceController.saveCache()
     }
     
     func clearFavorites() {

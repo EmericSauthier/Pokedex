@@ -56,7 +56,7 @@ struct PersistenceController {
         }
     }
     
-    static func savePokemons() {
+    static func saveCache() {
         let context = PersistenceController.shared.container.viewContext
         
         if context.hasChanges {
@@ -74,7 +74,7 @@ struct PersistenceController {
     
     // Chargement des favoris
     static func loadFavorites() -> [Pokemon] {
-        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = FavoriteEntity.fetchRequest()
+        let fetchRequest: NSFetchRequest<FavoriteEntity> = FavoriteEntity.fetchRequest()
         var pokemonList: [Pokemon] = []
         
         do {
@@ -95,6 +95,19 @@ struct PersistenceController {
     
     // Efface tous les favoris
     static func clearFavorites() {
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = FavoriteEntity.fetchRequest()
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        
+        do {
+            try PersistenceController.shared.container.viewContext.execute(deleteRequest)
+            try PersistenceController.shared.container.viewContext.save()
+        } catch {
+            print("Erreur : \(error)")
+        }
+    }
+    
+    // Efface un favori
+    static func clearFavorite(pokemon: Pokemon) {
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = FavoriteEntity.fetchRequest()
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
         
