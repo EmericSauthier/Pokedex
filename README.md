@@ -19,8 +19,8 @@
 
 ## Partie 4
 - Barre de recherche : OK
-- Filtre par type : NOK
-- Tri : NOK
+- Filtre par type : OK
+- Tri : OK
 - @State et onChange : OK
 
 ## Partie 5

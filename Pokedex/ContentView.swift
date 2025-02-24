@@ -15,58 +15,77 @@ struct ContentView: View {
     
     @State var pokemonsDisplayed: [Pokemon] = []
     @State var pokemonSearched: String = ""
-    @State var pokemonTypeFiltered: String = "All"
-    @State var pokemonTypesAvailable: [String] = ["All"]
+    @State var pokemonTypeFiltered: String = "All Types"
+    @State var pokemonTypesAvailable: [String] = ["All Types"]
+    @State var pokemonSortAscending: Bool = false
     
     var body: some View {
         NavigationView {
-            List {
-                // pokemonViewModel.pokemons
-                ForEach(pokemonsDisplayed) { pokemon in
-                    NavigationLink {
-                        PokemonDetail(pokemon: pokemon)
-                            .environmentObject(pokemonViewModel)
-                    } label: {
-                        HStack {
-                            AsyncImage(url: URL(string: pokemon.sprites.front_default!)) { image in
-                                image.resizable().scaledToFit()
-                            } placeholder: {
-                                ProgressView()
+            VStack {
+                Spacer().frame(height: 15)
+                
+                VStack {
+                    HStack {
+                        Image(systemName: "magnifyingglass")
+                        TextField("Rechercher un pokemon", text: $pokemonSearched)
+                            .padding(8)
+                            .background(Color(.systemGray6))
+                            .cornerRadius(10)
+                            .autocapitalization(.none)
+                            .disableAutocorrection(true)
+                            .onChange(of: $pokemonSearched.wrappedValue, applyFilters)
+                    }
+                    
+                    HStack {
+                        Picker("Filtre type", selection: $pokemonTypeFiltered) {
+                            ForEach(pokemonTypesAvailable, id: \.self) { type in
+                                Text(String(describing: type))
                             }
-                            .frame(width: 64, height: 64)
-                            
-                            VStack(alignment: .leading) {
-                                Text(pokemon.name.capitalized)
-                                Text("Types :" + pokemon.getTypes())
-                                    .fontWeight(.light)
-                                    .foregroundColor(.gray)
+                        }
+                        .onChange(of: $pokemonTypeFiltered.wrappedValue, applyFilters)
+                    }
+                    HStack {
+                        Button(action: {
+                            $pokemonSortAscending.wrappedValue.toggle()
+                            applyFilters()
+                        }, label: {
+                            if $pokemonSortAscending.wrappedValue {
+                                Text("Z -> A")
+                            } else {
+                                Text("A -> Z")
+                            }
+                        })
+                    }
+                }
+                .padding(.horizontal, 26)
+                
+                List {
+                    // pokemonViewModel.pokemons
+                    ForEach(pokemonsDisplayed) { pokemon in
+                        NavigationLink {
+                            PokemonDetail(pokemon: pokemon)
+                                .environmentObject(pokemonViewModel)
+                        } label: {
+                            HStack {
+                                AsyncImage(url: URL(string: pokemon.sprites.front_default!)) { image in
+                                    image.resizable().scaledToFit()
+                                } placeholder: {
+                                    ProgressView()
+                                }
+                                .frame(width: 64, height: 64)
+                                
+                                VStack(alignment: .leading) {
+                                    Text(pokemon.name.capitalized)
+                                    Text("Types :" + pokemon.getTypes())
+                                        .fontWeight(.light)
+                                        .foregroundColor(.gray)
+                                }
                             }
                         }
                     }
                 }
             }
-            .toolbar {
-                VStack(
-                    alignment: .leading,
-                    content: {
-                        HStack {
-                            Image(systemName: "magnifyingglass")
-                            TextField("Rechercher un pokemon", text: $pokemonSearched)
-                                .autocapitalization(.none)
-                                .disableAutocorrection(true)
-                                .onChange(of: $pokemonSearched.wrappedValue, applyFilters)
-                        }
-                        HStack {
-                            Picker("Filtre type", selection: $pokemonTypeFiltered) {
-                                ForEach(pokemonTypesAvailable, id: \.self) { type in
-                                    Text(String(describing: type))
-                                }
-                            }
-                            .onChange(of: $pokemonTypeFiltered.wrappedValue, applyFilters)
-                        }
-                    }
-                )
-            }
+            .navigationTitle("Mon Pokédex")
             .task {
                 await pokemonViewModel.initializeData()
                 pokemonsDisplayed = pokemonViewModel.pokemons
@@ -83,11 +102,12 @@ struct ContentView: View {
     
     func applyFilters() {
         pokemonsDisplayed = pokemonViewModel.pokemons
-        pokemonsDisplayed = searchPokemon(pokemonList: pokemonsDisplayed)
+        pokemonsDisplayed = searchPokemonByName(pokemonList: pokemonsDisplayed)
         pokemonsDisplayed = filterPokemonByType(pokemonList: pokemonsDisplayed)
+        pokemonsDisplayed = sortPokemonByName(pokemonList: pokemonsDisplayed)
     }
     
-    func searchPokemon(pokemonList: [Pokemon]) -> [Pokemon] {
+    func searchPokemonByName(pokemonList: [Pokemon]) -> [Pokemon] {
         if $pokemonSearched.wrappedValue.isEmpty {
             return pokemonList
         } else {
@@ -99,7 +119,7 @@ struct ContentView: View {
     }
     
     func filterPokemonByType(pokemonList: [Pokemon]) -> [Pokemon] {
-        if $pokemonTypeFiltered.wrappedValue == "All" {
+        if $pokemonTypeFiltered.wrappedValue == "All Types" {
             return pokemonList
         } else {
             return pokemonList.filter({
@@ -108,5 +128,9 @@ struct ContentView: View {
                 })
             })
         }
+    }
+    
+    func sortPokemonByName(pokemonList: [Pokemon]) -> [Pokemon] {
+        return pokemonList.sorted(by: { ($0.name.lowercased() > $1.name.lowercased()) && $pokemonSortAscending.wrappedValue })
     }
 }
