@@ -13,8 +13,8 @@
 - CoreData : OK
 
 ## Partie 3
-- Page de détail d'un pokemon : NOK
-- Barre de navigation  : NOK
+- Page de détail d'un pokemon : OK
+- Barre de navigation  : OK
 - Animations personnalisées : NOK
 
 ## Partie 4

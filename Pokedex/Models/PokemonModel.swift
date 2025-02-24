@@ -31,6 +31,8 @@ struct Pokemon: Codable, Identifiable {
     }
     
     static func toJson(stringObject: String) -> Pokemon? {
+        if stringObject.isEmpty { return nil }
+        
         do {
             return try JSONDecoder().decode(Pokemon.self, from: stringObject.data(using: .utf8)!)
         } catch {
