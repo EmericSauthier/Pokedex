@@ -18,7 +18,10 @@
 - Animations personnalisées : NOK
 
 ## Partie 4
-- 
+- Barre de recherche : OK
+- Filtre par type : NOK
+- Tri : NOK
+- @State et onChange : OK
 
 ## Partie 5
 - 
