@@ -11,20 +11,12 @@ import CoreData
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
     
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \PokemonEntity.id, ascending: true)],
-        animation: .default)
-    private var pokemons: FetchedResults<PokemonEntity>
-    
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \FavoriteEntity.id, ascending: true)],
-        animation: .default)
-    private var favorites: FetchedResults<FavoriteEntity>
-    
     @EnvironmentObject var pokemonViewModel: PokemonViewModel
     
     @State var pokemonsDisplayed: [Pokemon] = []
     @State var pokemonSearched: String = ""
+    @State var pokemonTypeFiltered: String = "All"
+    @State var pokemonTypesAvailable: [String] = ["All"]
     
     var body: some View {
         NavigationView {
@@ -53,28 +45,68 @@ struct ContentView: View {
                     }
                 }
             }
-            .toolbar(content: {
-                HStack {
-                    Image(systemName: "magnifyingglass")
-                    TextField("Rechercher un pokemon", text: $pokemonSearched)
-                        .autocapitalization(.none)
-                        .disableAutocorrection(true)
-                        .onChange(of: $pokemonSearched.wrappedValue, {
-                            if $pokemonSearched.wrappedValue.isEmpty {
-                                pokemonsDisplayed = pokemonViewModel.pokemons
-                            } else {
-                                pokemonsDisplayed = pokemonViewModel.pokemons.filter({
-                                    let string = NSString(string: $0.name.lowercased())
-                                    return string.contains(String($pokemonSearched.wrappedValue).lowercased())
-                                })
+            .toolbar {
+                VStack(
+                    alignment: .leading,
+                    content: {
+                        HStack {
+                            Image(systemName: "magnifyingglass")
+                            TextField("Rechercher un pokemon", text: $pokemonSearched)
+                                .autocapitalization(.none)
+                                .disableAutocorrection(true)
+                                .onChange(of: $pokemonSearched.wrappedValue, applyFilters)
+                        }
+                        HStack {
+                            Picker("Filtre type", selection: $pokemonTypeFiltered) {
+                                ForEach(pokemonTypesAvailable, id: \.self) { type in
+                                    Text(String(describing: type))
+                                }
                             }
-                        })
-                }
+                            .onChange(of: $pokemonTypeFiltered.wrappedValue, applyFilters)
+                        }
+                    }
+                )
+            }
+            .task {
+                await pokemonViewModel.initializeData()
+                pokemonsDisplayed = pokemonViewModel.pokemons
+                pokemonsDisplayed.forEach({ pokemon in
+                    pokemon.types.forEach({ type in
+                        if !pokemonTypesAvailable.contains(where: { $0 == type.name }) {
+                            pokemonTypesAvailable.append(type.name)
+                        }
+                    })
+                })
+            }
+        }
+    }
+    
+    func applyFilters() {
+        pokemonsDisplayed = pokemonViewModel.pokemons
+        pokemonsDisplayed = searchPokemon(pokemonList: pokemonsDisplayed)
+        pokemonsDisplayed = filterPokemonByType(pokemonList: pokemonsDisplayed)
+    }
+    
+    func searchPokemon(pokemonList: [Pokemon]) -> [Pokemon] {
+        if $pokemonSearched.wrappedValue.isEmpty {
+            return pokemonList
+        } else {
+            return pokemonList.filter({
+                let string = NSString(string: $0.name.lowercased())
+                return string.contains(String($pokemonSearched.wrappedValue).lowercased())
             })
         }
-        .task {
-            await pokemonViewModel.initializeData()
-            pokemonsDisplayed = pokemonViewModel.pokemons
+    }
+    
+    func filterPokemonByType(pokemonList: [Pokemon]) -> [Pokemon] {
+        if $pokemonTypeFiltered.wrappedValue == "All" {
+            return pokemonList
+        } else {
+            return pokemonList.filter({
+                $0.getTypesToArray().contains(where: {
+                    $0.lowercased() == $pokemonTypeFiltered.wrappedValue.lowercased()
+                })
+            })
         }
     }
 }

@@ -55,6 +55,16 @@ struct Pokemon: Codable, Identifiable, Hashable {
         return string.replacingOccurrences(of: "   ", with: "").replacingOccurrences(of: "  ", with: ", ")
     }
     
+    func getTypesToArray() -> [String] {
+        var array = [String]()
+        
+        for type in types {
+            array.append(type.name)
+        }
+        
+        return array
+    }
+    
     static func == (lhs: Pokemon, rhs: Pokemon) -> Bool {
         return lhs.id == rhs.id
     }
