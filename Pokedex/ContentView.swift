@@ -18,13 +18,14 @@ struct ContentView: View {
     @State var pokemonTypeFiltered: String = "All Types"
     @State var pokemonTypesAvailable: [String] = ["All Types"]
     @State var pokemonSortAscending: Bool = false
+    @State var isHover: Bool = false
     
     var body: some View {
         NavigationView {
             VStack {
                 Spacer().frame(height: 15)
                 
-                VStack {
+                VStack(alignment: .leading) {
                     HStack {
                         Image(systemName: "magnifyingglass")
                         TextField("Rechercher un pokemon", text: $pokemonSearched)
@@ -42,8 +43,10 @@ struct ContentView: View {
                                 Text(String(describing: type))
                             }
                         }
+                        .padding(.horizontal, 22)
                         .onChange(of: $pokemonTypeFiltered.wrappedValue, applyFilters)
                     }
+                    
                     HStack {
                         Button(action: {
                             $pokemonSortAscending.wrappedValue.toggle()
@@ -55,6 +58,7 @@ struct ContentView: View {
                                 Text("A -> Z")
                             }
                         })
+                        .padding(.horizontal, 34)
                     }
                 }
                 .padding(.horizontal, 26)

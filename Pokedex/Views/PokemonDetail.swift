@@ -12,7 +12,8 @@ struct PokemonDetail: View {
     
     @EnvironmentObject var pokemonViewModel: PokemonViewModel
     
-    @State var imageAnim = false
+    @State var imgAnim = false
+    @State var nameAnim = false
     
     let pokemon: Pokemon
     
@@ -23,8 +24,9 @@ struct PokemonDetail: View {
             } placeholder: {
                 ProgressView()
             }
+            .scaleEffect(imgAnim ? 1.0 : 0.0)
             .onAppear {
-                withAnimation(.easeOut(duration: 1.0)) { imageAnim = true }
+                withAnimation(.easeOut(duration: 1.0)) { imgAnim = true }
             }
             
             Text(pokemon.name.capitalized)
