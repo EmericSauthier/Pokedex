@@ -6,12 +6,20 @@
 //
 
 import Foundation
+import SwiftUI
 
 struct Pokemon: Codable, Identifiable {
     var id: Int
     var name: String
-    var types: [PokemonTypeInfo]
+    var types: [PokemonType]
     var sprites: PokemonSprite
+    var stats: [PokemonStat]
+    
+    // Pokemon's stats
+    var hp: Int { stats.filter( { $0.name == "hp" }).first?.base_stat ?? 0 }
+    var attack: Int { stats.filter( { $0.name == "attack" }).first?.base_stat ?? 0 }
+    var defense: Int { stats.filter( { $0.name == "defense" }).first?.base_stat ?? 0 }
+    var speed: Int { stats.filter( { $0.name == "speed" }).first?.base_stat ?? 0 }
     
     static func toString(pokemon: Pokemon) -> String {
         do {
@@ -35,7 +43,7 @@ struct Pokemon: Codable, Identifiable {
         var string = " "
         
         for type in types {
-            string += "\(type.type.name)  "
+            string += "\(type.name)  "
         }
         string += " "
         return string.replacingOccurrences(of: "   ", with: "").replacingOccurrences(of: "  ", with: ", ")

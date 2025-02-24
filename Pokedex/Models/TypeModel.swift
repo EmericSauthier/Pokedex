@@ -6,11 +6,20 @@
 //
 
 import Foundation
+import SwiftUI
 
-struct PokemonTypeInfo: Codable {
-    var type: PokemonType
+struct PokemonType: Codable, Identifiable {
+    var type: PokemonTypeInfo
+    
+    var id: String { type.name }
+    var name: String { type.name }
+    var icon: Image { type.getIcon() }
 }
 
-struct PokemonType: Codable {
+struct PokemonTypeInfo: Codable {
     var name: String
+    
+    func getIcon() -> Image {
+        return Image(name.capitalized + "Type")
+    }
 }

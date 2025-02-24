@@ -19,9 +19,23 @@ struct PokemonDetail: View {
             } placeholder: {
                 ProgressView()
             }
+            
             Text(pokemon.name.capitalized)
                 .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
                 .fontWidth(Font.Width.expanded)
+            
+            HStack { 
+                ForEach(pokemon.types) { typeInfo in
+                    typeInfo.type.getIcon()
+                        .resizable()
+                        .frame(width: 32, height: 32)
+                }
+            }
+            
+            Text("HP : \(pokemon.hp)")
+            Text("Attack : \(pokemon.attack)")
+            Text("Defense : \(pokemon.defense)")
+            Text("Speed : \(pokemon.speed)")
         }
     }
 }

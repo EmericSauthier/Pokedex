@@ -36,6 +36,8 @@ struct ContentView: View {
                             VStack(alignment: .leading) {
                                 Text(pokemon.name.capitalized)
                                 Text("Types :" + pokemon.getTypes())
+                                    .fontWeight(.light)
+                                    .foregroundColor(.gray)
                             }
                         }
                     }
