@@ -18,7 +18,7 @@ struct ContentView: View {
     @State var pokemonTypeFiltered: String = "All Types"
     @State var pokemonTypesAvailable: [String] = ["All Types"]
     @State var pokemonSortAscending: Bool = false
-    @State var isHover: Bool = false
+    @State var onlyFavorites: Bool = false
     
     var body: some View {
         NavigationView {
@@ -60,6 +60,14 @@ struct ContentView: View {
                         })
                         .padding(.horizontal, 34)
                     }
+                    
+                    HStack {
+                        Toggle(isOn: $onlyFavorites, label: {
+                            Text("Afficher les favoris")
+                        })
+                        .padding(.horizontal, 34)
+                        .onChange(of: $onlyFavorites.wrappedValue, applyFilters)
+                    }
                 }
                 .padding(.horizontal, 26)
                 
@@ -100,12 +108,15 @@ struct ContentView: View {
                         }
                     })
                 })
+                
+                applyFilters()
             }
         }
     }
     
     func applyFilters() {
         pokemonsDisplayed = pokemonViewModel.pokemons
+        pokemonsDisplayed = filterPokemonFavorite(pokemonList: pokemonsDisplayed)
         pokemonsDisplayed = searchPokemonByName(pokemonList: pokemonsDisplayed)
         pokemonsDisplayed = filterPokemonByType(pokemonList: pokemonsDisplayed)
         pokemonsDisplayed = sortPokemonByName(pokemonList: pokemonsDisplayed)
@@ -129,6 +140,19 @@ struct ContentView: View {
             return pokemonList.filter({
                 $0.getTypesToArray().contains(where: {
                     $0.lowercased() == $pokemonTypeFiltered.wrappedValue.lowercased()
+                })
+            })
+        }
+    }
+    
+    func filterPokemonFavorite(pokemonList: [Pokemon]) -> [Pokemon] {
+        if !$onlyFavorites.wrappedValue {
+            return pokemonList
+        } else {
+            return pokemonList.filter({
+                let pokemonId = $0.id
+                return pokemonViewModel.favorites.contains(where: {
+                    $0.id == pokemonId
                 })
             })
         }
