@@ -13,17 +13,60 @@ class PokemonViewModel: ObservableObject {
     @Published var favorites: [Pokemon] = []
     
     func initializeData() async {
-        print("En mémoire : \(PersistenceController.shared.container.viewContext.retainsRegisteredObjects)")
-        if PersistenceController.shared.container.viewContext.retainsRegisteredObjects {
-            pokemons = loadPokemonFromCache()
-            favorites = loadFavoritesFromCache()
-        } else {
+        pokemons = loadPokemonFromCache()
+        favorites = loadFavoritesFromCache()
+        
+        if pokemons.count == 0 {
             pokemons = await ApiService().loadData()
-            saveToCache()
+            savePokemons()
+            
+            favorites = []
         }
     }
     
-    func saveToCache() {
+    func loadPokemonFromCache() -> [Pokemon] {
+        return PersistenceController.loadPokemons()
+    }
+    
+    func loadFavoritesFromCache() -> [Pokemon] {
+        return PersistenceController.loadFavorites()
+    }
+    
+    func clearPokemons() {
+        PersistenceController.clearPokemons()
+        
+        pokemons = loadPokemonFromCache()
+    }
+    
+    func clearFavorites() {
+        PersistenceController.clearFavorites()
+        
+        favorites = loadFavoritesFromCache()
+    }
+    
+    func clearFavorite(pokemon: Pokemon) {
+        PersistenceController.clearFavorite(pokemon: pokemon)
+        
+        favorites = loadFavoritesFromCache()
+    }
+    
+    func addToFavorites(pokemon: Pokemon) {
+        if favorites.contains(where: { $0.id == pokemon.id }) {
+            return
+        }
+        
+        let viewContext = PersistenceController.shared.container.viewContext
+        
+        let entity = FavoriteEntity(context: viewContext)
+        entity.id = Int64(pokemon.id)
+        
+        entity.data = Pokemon.toString(pokemon: pokemon)
+        
+        PersistenceController.saveCache()
+        favorites = PersistenceController.loadFavorites()
+    }
+    
+    func savePokemons() {
         PersistenceController.clearPokemons()
         
         let viewContext = PersistenceController.shared.container.viewContext
@@ -35,48 +78,7 @@ class PokemonViewModel: ObservableObject {
         }
         
         PersistenceController.saveCache()
-    }
-    
-//    func loadFromCache() -> [Pokemon] {
-//        let viewContext = PersistenceController.shared.container.viewContext
-//        let fetchRequest: NSFetchRequest<PokemonEntity> = PokemonEntity.fetchRequest()
-//        var pokemonList: [Pokemon] = []
-//        
-//        do {
-//            let results = try viewContext.fetch(fetchRequest)
-//            
-//            for result in results {
-//                let pokemon = Pokemon.toJson(stringObject: result.data ?? "")
-//                if pokemon != nil {
-//                    pokemonList.append(pokemon!)
-//                }
-//            }
-//        } catch {
-//            print("Erreur : \(error)")
-//        }
-//        
-//        return pokemonList
-//    }
-    
-    func loadPokemonFromCache() -> [Pokemon] {
-        return PersistenceController.loadPokemons()
-    }
-    
-    func loadFavoritesFromCache() -> [Pokemon] {
-        return PersistenceController.loadFavorites()
-    }
-    
-    func addToFavorites(pokemon: Pokemon) {
-        let viewContext = PersistenceController.shared.container.viewContext
         
-        let entity = FavoriteEntity(context: viewContext)
-        entity.id = Int64(pokemon.id)
-        entity.data = Pokemon.toString(pokemon: pokemon)
-        
-        PersistenceController.saveCache()
-    }
-    
-    func clearFavorites() {
-        
+        pokemons = loadPokemonFromCache()
     }
 }

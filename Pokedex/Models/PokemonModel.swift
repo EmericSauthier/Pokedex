@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 
 struct Pokemon: Codable, Identifiable {
+    
     var id: Int
     var name: String
     var types: [PokemonType]
@@ -22,21 +23,24 @@ struct Pokemon: Codable, Identifiable {
     var speed: Int { stats.filter( { $0.name == "speed" }).first?.base_stat ?? 0 }
     
     static func toString(pokemon: Pokemon) -> String {
-        do {
-            return try JSONEncoder().encode(pokemon).base64EncodedString()
-        } catch {
-            print("Erreur : \(error)")
+        let jsonData = try? JSONEncoder().encode(pokemon)
+        
+        if jsonData == nil {
             return ""
         }
+        
+        let jsonString = String(data: jsonData!, encoding: .utf8)!
+        return jsonString
     }
     
     static func toJson(stringObject: String) -> Pokemon? {
         if stringObject.isEmpty { return nil }
         
         do {
-            return try JSONDecoder().decode(Pokemon.self, from: stringObject.data(using: .utf8)!)
+            let jsonData = try JSONDecoder().decode(Pokemon.self, from: stringObject.data(using: .utf8)!)
+            return jsonData
         } catch {
-            print("Erreur : \(error)")
+            print("Erreur decode : \(error)")
             return nil
         }
     }

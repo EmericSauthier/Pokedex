@@ -16,6 +16,11 @@ struct ContentView: View {
         animation: .default)
     private var pokemons: FetchedResults<PokemonEntity>
     
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \FavoriteEntity.id, ascending: true)],
+        animation: .default)
+    private var favorites: FetchedResults<FavoriteEntity>
+    
     @EnvironmentObject var pokemonViewModel: PokemonViewModel
 
     var body: some View {
@@ -24,6 +29,7 @@ struct ContentView: View {
                 ForEach(pokemonViewModel.pokemons) { pokemon in
                     NavigationLink {
                         PokemonDetail(pokemon: pokemon)
+                            .environmentObject(pokemonViewModel)
                     } label: {
                         HStack {
                             AsyncImage(url: URL(string: pokemon.sprites.front_default!)) { image in
